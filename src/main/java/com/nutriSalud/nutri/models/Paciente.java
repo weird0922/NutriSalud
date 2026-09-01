@@ -25,6 +25,13 @@ public class Paciente {
     @Column(name = "estado", nullable = false, length = 30)
     private EstadoPaciente estado;
 
+    @Column(name = "orden_cita")
+    private Integer ordenCita;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "seguro_id")
+    private Seguro seguro;
+
     public Paciente() {}
 
     public Paciente(String dni, String nombre, LocalDate fechNac, double hemoglobina, EstadoPaciente estado) {
@@ -63,4 +70,10 @@ public class Paciente {
     public void setHemoglobina(double hemoglobina) { this.hemoglobina = hemoglobina; }
     public EstadoPaciente getEstado() { return estado; }
     public void setEstado(EstadoPaciente estado) { this.estado = estado; }
+
+    public Integer getOrdenCita() { return ordenCita; }
+    public void setOrdenCita(Integer ordenCita) { this.ordenCita = ordenCita; }
+
+    public Seguro getSeguro() { return seguro; }
+    public void setSeguro(Seguro seguro) { this.seguro = seguro; }
 }
