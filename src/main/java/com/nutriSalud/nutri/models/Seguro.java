@@ -1,9 +1,17 @@
 package com.nutriSalud.nutri.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "seguros")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class Seguro {
 
     @Id
@@ -17,22 +25,15 @@ public class Seguro {
     @Column(name = "nombre_legible", nullable = false, length = 120)
     private String nombreLegible;
 
-    public Seguro() {}
-
     public Seguro(TipoSeguro tipo) {
         this.tipo = tipo;
         this.nombreLegible = tipo.getEtiqueta();
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public TipoSeguro getTipo() { return tipo; }
     public void setTipo(TipoSeguro tipo) {
         this.tipo = tipo;
-        this.nombreLegible = tipo.getEtiqueta();
+        if (tipo != null) {
+            this.nombreLegible = tipo.getEtiqueta();
+        }
     }
-
-    public String getNombreLegible() { return nombreLegible; }
-    public void setNombreLegible(String nombreLegible) { this.nombreLegible = nombreLegible; }
 }

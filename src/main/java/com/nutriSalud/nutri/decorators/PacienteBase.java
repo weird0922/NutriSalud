@@ -16,7 +16,16 @@ public class PacienteBase implements PacienteEvaluable {
     public String getId() { return paciente.getDni(); }
 
     @Override
-    public String getNombre() { return paciente.getNombre(); }
+    public String getPrimerNombre() { return paciente.getPrimerNombre(); }
+
+    @Override
+    public String getApellidoPaterno() { return paciente.getApellidoPaterno(); }
+
+    @Override
+    public String getApellidoMaterno() { return paciente.getApellidoMaterno(); }
+
+    @Override
+    public String getNombreCompleto() { return paciente.getNombreCompleto(); }
 
     @Override
     public LocalDate getFechNac() { return paciente.getFechNac(); }

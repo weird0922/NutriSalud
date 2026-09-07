@@ -6,7 +6,10 @@ import java.time.LocalDate;
 public interface PacienteEvaluable {
 
     String getId();
-    String getNombre();
+    String getPrimerNombre();
+    String getApellidoPaterno();
+    String getApellidoMaterno();
+    String getNombreCompleto();
     LocalDate getFechNac();
     double getHemoglobina();
     EstadoPaciente getEstado();

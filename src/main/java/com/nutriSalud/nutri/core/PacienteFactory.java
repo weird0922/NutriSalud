@@ -7,9 +7,19 @@ import java.time.Period;
 
 public class PacienteFactory {
 
-    public static Paciente crearPaciente(String dni, String nombre, LocalDate fechNac, double hemoglobina) {
+    public static Paciente crearPaciente(String dni, String primerNombre, String apellidoPaterno, String apellidoMaterno, LocalDate fechNac, double hemoglobina) {
         EstadoPaciente estado = evaluarEstado(fechNac, hemoglobina);
-        return new Paciente(dni, nombre, fechNac, hemoglobina, estado);
+        Paciente paciente = new Paciente();
+        paciente.setDni(dni);
+        paciente.setPrimerNombre(primerNombre);
+        paciente.setApellidoPaterno(apellidoPaterno);
+        paciente.setApellidoMaterno(apellidoMaterno);
+        paciente.setFechNac(fechNac);
+        paciente.setHemoglobina(hemoglobina);
+        paciente.setEstado(estado);
+        paciente.setSeguro(null);
+        paciente.setActivo(true);
+        return paciente;
     }
 
     private static EstadoPaciente evaluarEstado(LocalDate fechNac, double hemoglobina) {

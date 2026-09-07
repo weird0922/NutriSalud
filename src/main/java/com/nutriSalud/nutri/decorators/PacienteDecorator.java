@@ -17,8 +17,23 @@ public abstract class PacienteDecorator implements PacienteEvaluable {
     }
 
     @Override
-    public String getNombre() {
-        return pacienteDecorado.getNombre();
+    public String getPrimerNombre() {
+        return pacienteDecorado.getPrimerNombre();
+    }
+
+    @Override
+    public String getApellidoPaterno() {
+        return pacienteDecorado.getApellidoPaterno();
+    }
+
+    @Override
+    public String getApellidoMaterno() {
+        return pacienteDecorado.getApellidoMaterno();
+    }
+
+    @Override
+    public String getNombreCompleto() {
+        return pacienteDecorado.getNombreCompleto();
     }
 
     @Override
