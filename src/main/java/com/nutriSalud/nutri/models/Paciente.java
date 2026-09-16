@@ -1,6 +1,7 @@
 package com.nutriSalud.nutri.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,23 +42,35 @@ import java.time.Period;
 public class Paciente {
 
     @Id
+    @NotBlank(message = "El DNI es obligatorio")
+    @Size(min = 8, max = 15, message = "El DNI debe tener entre 8 y 15 caracteres")
     @Column(name = "dni", nullable = false, length = 15, unique = true)
     private String dni;
 
+    @NotBlank(message = "El primer nombre es obligatorio")
+    @Size(max = 80, message = "El primer nombre no puede exceder 80 caracteres")
     @Column(name = "primer_nombre", nullable = false, length = 80)
     private String primerNombre;
 
+    @NotBlank(message = "El apellido paterno es obligatorio")
+    @Size(max = 80, message = "El apellido paterno no puede exceder 80 caracteres")
     @Column(name = "apellido_paterno", nullable = false, length = 80)
     private String apellidoPaterno;
 
+    @Size(max = 80, message = "El apellido materno no puede exceder 80 caracteres")
     @Column(name = "apellido_materno", nullable = true, length = 80)
     private String apellidoMaterno;
 
+    @NotNull(message = "La fecha de nacimiento es obligatoria")
+    @Past(message = "La fecha de nacimiento debe estar en el pasado")
     @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate fechNac;
 
+    @NotNull(message = "La hemoglobina es obligatoria")
+    @DecimalMin(value = "0.0", message = "La hemoglobina no puede ser negativa")
+    @DecimalMax(value = "30.0", message = "La hemoglobina no puede ser mayor a 30")
     @Column(nullable = false)
-    private double hemoglobina;
+    private Double hemoglobina;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 30)

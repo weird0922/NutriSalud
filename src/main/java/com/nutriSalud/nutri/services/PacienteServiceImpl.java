@@ -3,6 +3,8 @@ package com.nutriSalud.nutri.services;
 import com.nutriSalud.nutri.core.EvaluacionUmbralAnemia;
 import com.nutriSalud.nutri.core.GestorAsignacionCitasSingleton;
 import com.nutriSalud.nutri.core.PacienteFactory;
+import com.nutriSalud.nutri.exceptions.ResourceConflictException;
+import com.nutriSalud.nutri.exceptions.ResourceNotFoundException;
 import com.nutriSalud.nutri.models.Cita;
 import com.nutriSalud.nutri.models.EstadoCita;
 import com.nutriSalud.nutri.models.EstadoPaciente;
@@ -51,14 +53,10 @@ public class PacienteServiceImpl implements IPacienteService {
         if (datosEntrada == null) {
             throw new IllegalArgumentException("El cuerpo de la solicitud es obligatorio");
         }
-        if (datosEntrada.getDni() == null || datosEntrada.getDni().isBlank()) {
-            throw new IllegalArgumentException("El DNI es obligatorio");
-        }
-        if (datosEntrada.getPrimerNombre() == null || datosEntrada.getPrimerNombre().isBlank()) {
-            throw new IllegalArgumentException("El primerNombre es obligatorio");
-        }
-        if (datosEntrada.getApellidoPaterno() == null || datosEntrada.getApellidoPaterno().isBlank()) {
-            throw new IllegalArgumentException("El apellidoPaterno es obligatorio");
+
+        if (pacienteRepository.findByDniIncluyendoInactivos(datosEntrada.getDni()).isPresent()) {
+            throw new ResourceConflictException("Paciente",
+                    "Ya existe un paciente con DNI " + datosEntrada.getDni());
         }
 
         TipoSeguro tipoSeguro = TipoSeguro.SIS;
@@ -126,7 +124,7 @@ public class PacienteServiceImpl implements IPacienteService {
     @Transactional
     public Paciente actualizarPaciente(String dni, Paciente datosActualizar) {
         Paciente existente = pacienteRepository.findByDniIncluyendoInactivos(dni)
-                .orElseThrow(() -> new IllegalStateException("Paciente con DNI " + dni + " no existe"));
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente", "dni", dni));
 
         if (datosActualizar == null) {
             throw new IllegalArgumentException("El cuerpo de actualización es obligatorio");
@@ -152,7 +150,7 @@ public class PacienteServiceImpl implements IPacienteService {
         }
 
         boolean cambioDatosEvaluables = false;
-        if (datosActualizar.getHemoglobina() > 0) {
+        if (datosActualizar.getHemoglobina() != null && datosActualizar.getHemoglobina() > 0) {
             existente.setHemoglobina(datosActualizar.getHemoglobina());
             cambioDatosEvaluables = true;
         }
@@ -180,11 +178,12 @@ public class PacienteServiceImpl implements IPacienteService {
     @Transactional
     public void desactivarPaciente(String dni) {
         pacienteRepository.findByDniIncluyendoInactivos(dni)
-                .orElseThrow(() -> new IllegalStateException("Paciente con DNI " + dni + " no existe"));
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente", "dni", dni));
 
         int filas = pacienteRepository.desactivarPorDni(dni);
         if (filas == 0) {
-            throw new IllegalStateException("No se pudo desactivar el paciente con DNI " + dni);
+            throw new ResourceConflictException("Paciente",
+                    "No se pudo desactivar el paciente con DNI " + dni);
         }
     }
 
@@ -192,11 +191,12 @@ public class PacienteServiceImpl implements IPacienteService {
     @Transactional
     public void reactivarPaciente(String dni) {
         pacienteRepository.findByDniIncluyendoInactivos(dni)
-                .orElseThrow(() -> new IllegalStateException("Paciente con DNI " + dni + " no existe"));
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente", "dni", dni));
 
         int filas = pacienteRepository.reactivarPorDni(dni);
         if (filas == 0) {
-            throw new IllegalStateException("No se pudo reactivar el paciente con DNI " + dni);
+            throw new ResourceConflictException("Paciente",
+                    "No se pudo reactivar el paciente con DNI " + dni);
         }
     }
 
@@ -300,7 +300,7 @@ public class PacienteServiceImpl implements IPacienteService {
     @Transactional
     public Cita asignarCitaAutomatica(String dniPaciente) {
         Paciente paciente = pacienteRepository.findByDniIncluyendoInactivos(dniPaciente)
-                .orElseThrow(() -> new IllegalStateException("Paciente con DNI " + dniPaciente + " no existe"));
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente", "dni", dniPaciente));
 
         GestorAsignacionCitasSingleton gestor = GestorAsignacionCitasSingleton.getInstancia();
 
@@ -345,7 +345,7 @@ public class PacienteServiceImpl implements IPacienteService {
             throw new IllegalArgumentException("El nuevoEstado de la cita es obligatorio");
         }
         Cita cita = citaRepository.findById(numeroOrden)
-                .orElseThrow(() -> new IllegalStateException("Cita con orden " + numeroOrden + " no existe"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cita", "numeroOrden", numeroOrden));
         cita.setEstado(nuevoEstado);
         return citaRepository.save(cita);
     }
