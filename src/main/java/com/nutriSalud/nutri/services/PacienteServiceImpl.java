@@ -3,6 +3,7 @@ package com.nutriSalud.nutri.services;
 import com.nutriSalud.nutri.core.EvaluacionUmbralAnemia;
 import com.nutriSalud.nutri.core.GestorAsignacionCitasSingleton;
 import com.nutriSalud.nutri.core.PacienteFactory;
+import com.nutriSalud.nutri.exceptions.EdadNoPermitidaException;
 import com.nutriSalud.nutri.exceptions.ResourceConflictException;
 import com.nutriSalud.nutri.exceptions.ResourceNotFoundException;
 import com.nutriSalud.nutri.models.Cita;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,8 @@ public class PacienteServiceImpl implements IPacienteService {
         if (datosEntrada == null) {
             throw new IllegalArgumentException("El cuerpo de la solicitud es obligatorio");
         }
+
+        validarEdadMenor17(datosEntrada.getFechNac(), "registrar");
 
         if (pacienteRepository.findByDniIncluyendoInactivos(datosEntrada.getDni()).isPresent()) {
             throw new ResourceConflictException("Paciente",
@@ -140,6 +144,7 @@ public class PacienteServiceImpl implements IPacienteService {
             existente.setApellidoMaterno(datosActualizar.getApellidoMaterno());
         }
         if (datosActualizar.getFechNac() != null) {
+            validarEdadMenor17(datosActualizar.getFechNac(), "actualizar");
             existente.setFechNac(datosActualizar.getFechNac());
         }
         if (datosActualizar.getSeguro() != null && datosActualizar.getSeguro().getTipo() != null) {
@@ -415,5 +420,21 @@ public class PacienteServiceImpl implements IPacienteService {
             resultado.put(motivo, cantidad);
         }
         return resultado;
+    }
+
+    private static void validarEdadMenor17(LocalDate fechNac, String operacion) {
+        if (fechNac == null) {
+            return;
+        }
+        int edad = Period.between(fechNac, LocalDate.now()).getYears();
+        if (edad >= 18) {
+            throw new EdadNoPermitidaException(
+                    "Paciente",
+                    "fechNac",
+                    edad,
+                    "No se puede " + operacion + " el paciente. Solo atendemos niños y adolescentes hasta los 17 años. " +
+                    "Edad calculada: " + edad + " años."
+            );
+        }
     }
 }

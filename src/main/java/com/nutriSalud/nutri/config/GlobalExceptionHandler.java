@@ -1,6 +1,7 @@
 package com.nutriSalud.nutri.config;
 
 import com.nutriSalud.nutri.dto.ApiResponse;
+import com.nutriSalud.nutri.exceptions.EdadNoPermitidaException;
 import com.nutriSalud.nutri.exceptions.ResourceConflictException;
 import com.nutriSalud.nutri.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,17 @@ public class GlobalExceptionHandler {
         data.put("motivo", ex.getReason());
         data.put("mensaje", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.fail(data));
+    }
+
+    @ExceptionHandler(EdadNoPermitidaException.class)
+    public ResponseEntity<ApiResponse<Map<String, Object>>> handleEdadNoPermitida(EdadNoPermitidaException ex) {
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("recurso", ex.getRecurso());
+        data.put("campo", ex.getCampo());
+        data.put("edadCalculada", ex.getValorRechazado());
+        data.put("edadMaximaPermitida", 17);
+        data.put("mensaje", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ApiResponse.fail(data));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
