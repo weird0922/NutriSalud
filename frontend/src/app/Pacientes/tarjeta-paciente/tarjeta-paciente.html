@@ -1,0 +1,12 @@
+
+<article [class]="'tarjeta nivel-' + nivelAnemia()">
+<h3>{{ paciente.nombres }}
+{{ paciente.apellidos }}</h3>
+<p>DNI {{ paciente.dni }}</p>
+<p>{{ paciente.edadMeses }} meses ·
+Hb {{ paciente.hemoglobina | number:'1.1-1' }}</p>
+</article>
+<button type="button" (click)="avisarSeleccion()">
+Ver detalle
+</button>
+

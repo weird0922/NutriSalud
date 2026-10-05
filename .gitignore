@@ -1,0 +1,13 @@
+# Dependencias y builds
+node_modules/
+dist/
+.angular/
+target/
+
+# Editores
+.idea/
+.vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
