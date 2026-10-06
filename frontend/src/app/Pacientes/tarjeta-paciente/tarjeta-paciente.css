@@ -1,5 +1,24 @@
-:host { display: block; background: #ececec;
-padding: 12px; margin: 8px; }
-.rojo{
-  color: rgb(2, 148, 216);
+/* 1. VARIABLES CSS: un color por NIVEL. Los
+umbrales viven en reglas/anemia.ts,
+nunca en el CSS. */
+:host {
+--hb-normal: #2E7D32;
+--hb-leve: #F9A825;
+--hb-moderada: #EF6C00;
+--hb-severa: #B23A2E;
+}
+.tarjeta {
+border-left: 6px solid #ccc; border-radius: 8px;
+padding: 1rem;
+}
+/* 2. UNA CLASE POR NIVEL: var() lee la variable */
+.tarjeta.nivel-normal { border-left-color: var(--hb-normal); }
+.tarjeta.nivel-leve { border-left-color: var(--hb-leve); }
+.tarjeta.nivel-moderada { border-left-color: var(--hb-moderada); }
+.tarjeta.nivel-severa { border-left-color: var(--hb-severa); }
+/* 3. FLEXBOX: alinear en UNA direccion */
+.tarjeta header {
+display: flex;
+justify-content: space-between; /* extremos */
+align-items: center; /* centrado */
 }
